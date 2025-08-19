@@ -1,0 +1,8 @@
+{
+  "appId": "com.caruur.app",
+  "appName": "Caruur",
+  "webDir": "dist",
+  "server": {
+    "cleartext": true
+  }
+}

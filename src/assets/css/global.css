@@ -1,0 +1,97 @@
+:root {
+  --primary-color: #f29201;
+  /* --secondary-color: #ff6347; */
+  --bg-color: #000000;
+  --text-color: #ffffff;
+  --font-family: 'Trebuchet MS', Arial, Helvetica, sans-serif;
+  --bg-input: #1a1a1a;
+}
+[data-theme='light'] {
+  --bg-color: #ffffff;
+  --text-color: #000000;
+  --bg-input: #ececec;
+}
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--bg-color);
+  font-family: var(--font-family);
+  color: var(--text-color);
+  margin-bottom: 4em;
+  overflow-x: hidden;
+}
+
+h1 span {
+  font-size: 30px;
+}
+
+main .icon {
+  width: 100px;
+  height: 100px;
+  margin-bottom: 10px;
+  transition: filter 0.2s;
+}
+
+.icon:active {
+  filter: brightness(0.8);
+}
+
+main a:active {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+main a:active img {
+  filter: brightness(0.5) sepia(1) hue-rotate(-50deg) saturate(5);
+}
+/* --------------------------------------
+ * Main content using flexbox
+ * Creates a flexible, wrapped layout for navigation icons
+ * -------------------------------------- */
+
+/* FAQ.css */
+
+.orange {
+  color: #f99d1a;
+  margin-bottom: 0.5em;
+}
+
+p {
+  font-size: 1.3em;
+  line-height: 1.5;
+  margin-bottom: 1em;
+}
+
+ul,
+ol {
+  font-size: 1.2em;
+  line-height: 1.5;
+  margin: 1.5em 0 1em;
+}
+
+li {
+  margin-bottom: 0.3em;
+  margin-left: 1em;
+}
+
+a {
+  color: #f99d1a;
+  text-decoration: none;
+  font-size: 1.1em;
+}
+/* --------------------------------------
+* Error message styling
+* -------------------------------------- */
+.error-message {
+  background-color: rgba(220, 53, 69, 0.1);
+  color: #ff6b6b;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  font-size: 0.9em;
+  border-left: 4px solid #ff6b6b;
+}
