@@ -4,12 +4,15 @@
 import ButtonStandart from '@/components/ButtonStandart.vue'
 import { ref, onMounted } from 'vue'
 import { getApiBase } from '@/config/api'
+import { Capacitor } from '@capacitor/core'
+import { Browser } from '@capacitor/browser'
+import { Filesystem, Directory } from '@capacitor/filesystem'
 
 const apiBase = getApiBase()
-
 const content = ref('')
 const error = ref('')
 const loading = ref(true)
+const isNative = Capacitor.isNativePlatform()
 
 const handlerdownload = async () => {
   const apiKey = sessionStorage.getItem('apiKey')
@@ -32,25 +35,36 @@ const handlerdownload = async () => {
 
     const base64String = data.formulier
     const mimeType = 'application/pdf'
+    const fileName = 'aanrijdings-formulier.pdf'
 
-    const byteCharacters = atob(base64String)
-    const byteNumbers = new Array(byteCharacters.length)
-    for (let i = 0; i < byteCharacters.length; i++) {
-      byteNumbers[i] = byteCharacters.charCodeAt(i)
+    if (isNative) {
+      // 📱 Mobile (Capacitor) → guarda no Filesystem
+      await Filesystem.writeFile({
+        path: fileName,
+        data: base64String,
+        directory: Directory.Documents, // ou Directory.Downloads (Android)
+      })
+      alert(`Bestand opgeslagen als ${fileName}`)
+    } else {
+      const byteCharacters = atob(base64String)
+      const byteNumbers = new Array(byteCharacters.length)
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i)
+      }
+      const byteArray = new Uint8Array(byteNumbers)
+      const blob = new Blob([byteArray], { type: mimeType })
+
+      const blobUrl = URL.createObjectURL(blob)
+
+      const link = document.createElement('a')
+      link.href = blobUrl
+      link.download = 'aanrijdings-formulier.pdf'
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+
+      URL.revokeObjectURL(blobUrl)
     }
-    const byteArray = new Uint8Array(byteNumbers)
-    const blob = new Blob([byteArray], { type: mimeType })
-
-    const blobUrl = URL.createObjectURL(blob)
-
-    const link = document.createElement('a')
-    link.href = blobUrl
-    link.download = 'aanrijdings-formulier.pdf'
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-
-    URL.revokeObjectURL(blobUrl)
   } catch (error) {
     console.error('Error making the download:', error)
   }

@@ -3,12 +3,14 @@ import ButtonStandart from '@/components/ButtonStandart.vue'
 import { inject } from 'vue'
 // const apiBase = import.meta.env.VITE_API_BASE
 import { getApiBase } from '@/config/api'
+import { Capacitor } from '@capacitor/core'
+import { Browser } from '@capacitor/browser'
+import { Filesystem, Directory } from '@capacitor/filesystem'
 
 const apiBase = getApiBase()
-
 const selectedVehicle = inject('selectedVehicleId')
-
 const apiKey = sessionStorage.getItem('apiKey')
+const isNative = Capacitor.isNativePlatform()
 
 const handlerPreview = async (selectedVehicle) => {
   if (selectedVehicle) {
@@ -27,26 +29,37 @@ const handlerPreview = async (selectedVehicle) => {
 
     const data = await res.json()
     if (data.success) {
-      const greenCard = data.greencard
+      const base64Pdf = data.greencard
       const mimeType = 'application/pdf'
 
-      const byteCharacters = atob(greenCard)
-      const byteNumbers = new Array(byteCharacters.length)
-      for (let i = 0; i < byteCharacters.length; i++) {
-        byteNumbers[i] = byteCharacters.charCodeAt(i)
+      if (isNative) {
+        // 📱 Mobile (Capacitor) → abre no Browser nativo
+        const pdfUrl = `data:${mimeType};base64,${base64Pdf}`
+        await Browser.open({ url: pdfUrl })
+      } else {
+        const byteCharacters = atob(base64Pdf)
+        const byteNumbers = new Array(byteCharacters.length)
+        for (let i = 0; i < byteCharacters.length; i++) {
+          byteNumbers[i] = byteCharacters.charCodeAt(i)
+        }
+        const byteArray = new Uint8Array(byteNumbers)
+        const blob = new Blob([byteArray], { type: mimeType })
+
+        const blobUrl = URL.createObjectURL(blob)
+
+        window.open(blobUrl, '_blank')
       }
-      const byteArray = new Uint8Array(byteNumbers)
-      const blob = new Blob([byteArray], { type: mimeType })
-
-      const blobUrl = URL.createObjectURL(blob)
-
-      window.open(blobUrl, '_blank')
     }
   } else {
     alert('Selecteer eerst een voertuig.')
   }
 }
+
 const handlerDownload = async (selectedVehicle) => {
+  if (!selectedVehicle) {
+    alert('Selecteer eerst een voertuig.')
+    return
+  }
   try {
     const res = await fetch(
       `${apiBase}/insurance-green-card.php?vehicleId=${selectedVehicle}`,
@@ -62,29 +75,38 @@ const handlerDownload = async (selectedVehicle) => {
     )
 
     const data = await res.json()
-
     const base64String = data.greencard
     const mimeType = 'application/pdf'
     const fileName = selectedVehicle + 'green-card.pdf'
 
-    const byteCharacters = atob(base64String)
-    const byteNumbers = new Array(byteCharacters.length)
-    for (let i = 0; i < byteCharacters.length; i++) {
-      byteNumbers[i] = byteCharacters.charCodeAt(i)
+    if (isNative) {
+      // 📱 Mobile (Capacitor) → guarda no Filesystem
+      await Filesystem.writeFile({
+        path: fileName,
+        data: base64String,
+        directory: Directory.Documents, // ou Directory.Downloads (Android)
+      })
+      alert(`Bestand opgeslagen als ${fileName}`)
+    } else {
+      const byteCharacters = atob(base64String)
+      const byteNumbers = new Array(byteCharacters.length)
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i)
+      }
+      const byteArray = new Uint8Array(byteNumbers)
+      const blob = new Blob([byteArray], { type: mimeType })
+
+      const blobUrl = URL.createObjectURL(blob)
+
+      const link = document.createElement('a')
+      link.href = blobUrl
+      link.download = fileName
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+
+      URL.revokeObjectURL(blobUrl)
     }
-    const byteArray = new Uint8Array(byteNumbers)
-    const blob = new Blob([byteArray], { type: mimeType })
-
-    const blobUrl = URL.createObjectURL(blob)
-
-    const link = document.createElement('a')
-    link.href = blobUrl
-    link.download = fileName
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-
-    URL.revokeObjectURL(blobUrl)
   } catch (error) {
     console.error('Error making the download:', error)
   }
