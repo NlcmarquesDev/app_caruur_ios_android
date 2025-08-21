@@ -56,6 +56,7 @@
 <script setup>
 // const apiBase = import.meta.env.VITE_API_BASE
 import { getApiBase } from '@/config/api'
+import { Preferences } from '@capacitor/preferences'
 
 const apiBase = getApiBase()
 import { ref, onMounted } from 'vue'
@@ -70,20 +71,30 @@ const remember = ref(false)
 function togglePassword() {
   showPassword.value = !showPassword.value
 }
-onMounted(() => {
-  const savedEmail = localStorage.getItem('savedEmail')
-  if (savedEmail) {
-    email.value = savedEmail
-    remember.value = true
+// onMounted(() => {
+//   const savedEmail = localStorage.getItem('savedEmail')
+//   if (savedEmail) {
+//     email.value = savedEmail
+//     remember.value = true
+//   }
+// })
+onMounted(async () => {
+  const { value: savedApiKey } = await Preferences.get({ key: 'apiKey' })
+  const { value: savedContactID } = await Preferences.get({ key: 'contactID' })
+
+  if (savedApiKey && savedContactID) {
+    sessionStorage.setItem('apiKey', savedApiKey)
+    sessionStorage.setItem('contactID', savedContactID)
+    router.push({ name: 'home' })
   }
 })
 
 async function handleLogin() {
-  if (remember.value) {
-    localStorage.setItem('savedEmail', email.value)
-  } else {
-    localStorage.removeItem('savedEmail')
-  }
+  // if (remember.value) {
+  //   localStorage.setItem('savedEmail', email.value)
+  // } else {
+  //   localStorage.removeItem('savedEmail')
+  // }
 
   try {
     // const res = await fetch('/api/app_webservice/authenticate.php', {
@@ -101,9 +112,19 @@ async function handleLogin() {
 
     const data = await res.json()
 
+    // if (data.success) {
+    //   sessionStorage.setItem('apiKey', data.api_key)
+    //   sessionStorage.setItem('contactID', data.user['ContactID'])
+    //   router.push({ name: 'home' })
     if (data.success) {
       sessionStorage.setItem('apiKey', data.api_key)
       sessionStorage.setItem('contactID', data.user['ContactID'])
+
+      if (remember.value) {
+        await Preferences.set({ key: 'apiKey', value: data.api_key })
+        await Preferences.set({ key: 'contactID', value: data.user['ContactID'] })
+      }
+
       router.push({ name: 'home' })
     } else {
       showError()
