@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted, inject, watch } from 'vue'
+import LoadingAuto from '@/components/LoadingAuto.vue'
 
 const content = ref('')
 const error = ref('')
@@ -111,7 +112,9 @@ watch(selectedVehicle, (newId, oldId) => {
 
 <template>
   <main id="main-content">
-    <div v-if="loading">Loading...</div>
+    <div v-if="loading" class="loading">
+      <LoadingAuto />
+    </div>
     <div v-else-if="error" class="error-message">{{ error }}</div>
     <div v-else v-html="content"></div>
     <section class="keuring" v-show="showkeuring">
@@ -187,7 +190,8 @@ main {
 
 .keuring-calender-month,
 .last-keuring-calender-month {
-  background-color: #4a8bf7;
+  /* background-color: #4a8bf7; */
+  background-color: var(--primary-color);
   color: white;
   padding: 5px 15px;
   border-radius: 5px 5px 0px 0px;

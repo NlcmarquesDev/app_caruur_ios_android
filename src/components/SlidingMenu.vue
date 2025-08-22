@@ -31,7 +31,7 @@ onMounted(() => {
 const menuItems = [
   { id: 1, icon: 'fa-user', text: 'Mijn profiel', link: '/profiel' },
   { id: 2, icon: 'fa-gear', text: 'Instellingen', link: '/instellingen' },
-  { id: 3, icon: 'fa-car', text: 'Kies auto', link: '', expandable: true },
+  { id: 3, icon: 'fa-car', text: 'Kies Voertuig', link: '', expandable: true },
   { id: 4, icon: 'fa-right-from-bracket', text: 'Afmelden', isLogout: true },
 ]
 </script>
@@ -67,7 +67,6 @@ const menuItems = [
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.3s ease;
-
 }
 
 .menu-overlay.active {
@@ -86,7 +85,7 @@ const menuItems = [
   z-index: 999;
   transition: right 0.3s ease;
   overflow-y: auto;
-  margin-top:50px;
+  margin-top: 50px;
 }
 
 .sliding-menu.open {

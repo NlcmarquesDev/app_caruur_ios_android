@@ -2,6 +2,7 @@
 // const apiBase = import.meta.env.VITE_API_BASE
 
 import ButtonStandart from '@/components/ButtonStandart.vue'
+import LoadingAuto from '@/components/LoadingAuto.vue'
 import { ref, onMounted } from 'vue'
 import { getApiBase } from '@/config/api'
 import { Capacitor } from '@capacitor/core'
@@ -117,7 +118,9 @@ onMounted(() => {
         DOWNLOADEN</ButtonStandart
       >
     </div>
-    <div v-if="loading">Loading...</div>
+    <div v-if="loading" class="loading">
+      <LoadingAuto />
+    </div>
     <div v-else-if="error" class="error-message">{{ error }}</div>
     <div v-else v-html="content"></div>
   </main>

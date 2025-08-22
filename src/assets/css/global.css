@@ -95,3 +95,12 @@ a {
   font-size: 0.9em;
   border-left: 4px solid #ff6b6b;
 }
+
+/* --------------------------------------
+* CAR LOADING styling
+* -------------------------------------- */
+.loading {
+  text-align: center;
+  font-size: 2em;
+  color: var(--primary-color);
+}

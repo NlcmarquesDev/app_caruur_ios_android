@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted, inject, watch } from 'vue'
+import LoadingAuto from '@/components/LoadingAuto.vue'
 // const apiBase = import.meta.env.VITE_API_BASE
 import { getApiBase } from '@/config/api'
 
@@ -93,7 +94,9 @@ watch(selectedVehicle, () => {
 
 <template>
   <main id="main-content">
-    <div v-if="loading">Loading...</div>
+    <div v-if="loading" class="loading">
+      <LoadingAuto />
+    </div>
     <div v-else-if="error" class="error-message">{{ error }}</div>
     <div v-else v-html="content"></div>
     <section class="onderhoud" v-show="showOnderhoud">
@@ -179,7 +182,8 @@ main {
 
 .onderhoud-calender-month,
 .last-onderhoud-calender-month {
-  background-color: #4a8bf7;
+  /* background-color: #4a8bf7; */
+  background-color: var(--primary-color);
   color: white;
   padding: 5px 15px;
   border-radius: 5px 5px 0px 0px;

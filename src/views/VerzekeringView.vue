@@ -4,8 +4,9 @@ import { inject } from 'vue'
 // const apiBase = import.meta.env.VITE_API_BASE
 import { getApiBase } from '@/config/api'
 import { Capacitor } from '@capacitor/core'
-import { Browser } from '@capacitor/browser'
+// import { Browser } from '@capacitor/browser'
 import { Filesystem, Directory } from '@capacitor/filesystem'
+import { FileOpener } from '@capacitor-community/file-opener'
 
 const apiBase = getApiBase()
 const selectedVehicle = inject('selectedVehicleId')
@@ -31,11 +32,26 @@ const handlerPreview = async (selectedVehicle) => {
     if (data.success) {
       const base64Pdf = data.greencard
       const mimeType = 'application/pdf'
+      const fileName = `${selectedVehicle}-green-card.pdf`
 
       if (isNative) {
         // 📱 Mobile (Capacitor) → abre no Browser nativo
-        const pdfUrl = `data:${mimeType};base64,${base64Pdf}`
-        await Browser.open({ url: pdfUrl })
+        // const pdfUrl = `data:${mimeType};base64,${base64Pdf}`
+        // await Browser.open({ url: pdfUrl })
+        await Filesystem.writeFile({
+          path: fileName,
+          data: base64Pdf,
+          directory: Directory.Cache, // ou Documents
+        })
+        const fileUri = await Filesystem.getUri({
+          path: fileName,
+          directory: Directory.Cache,
+        })
+
+        await FileOpener.open({
+          filePath: fileUri.uri,
+          contentType: 'application/pdf',
+        })
       } else {
         const byteCharacters = atob(base64Pdf)
         const byteNumbers = new Array(byteCharacters.length)

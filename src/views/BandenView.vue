@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
+import LoadingAuto from '@/components/LoadingAuto.vue'
 // const apiBase = import.meta.env.VITE_API_BASE
 import { getApiBase } from '@/config/api'
 
@@ -143,7 +144,9 @@ const renderedContent = computed(() => {
 
 <template>
   <main id="main-content">
-    <div v-if="loading">Loading...</div>
+    <div v-if="loading" class="loading">
+      <LoadingAuto />
+    </div>
     <div v-else-if="error" class="error-message">{{ error }}</div>
     <div v-else v-html="renderedContent"></div>
   </main>

@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
+import LoadingAuto from '@/components/LoadingAuto.vue'
 
 const content = ref('')
 const error = ref('')
@@ -45,7 +46,9 @@ onMounted(() => {
 </script>
 <template>
   <main id="main-content">
-    <div v-if="loading">Carregando...</div>
+    <div v-if="loading" class="loading">
+      <LoadingAuto />
+    </div>
     <div v-else-if="error" class="error-message">{{ error }}</div>
     <div v-else v-html="content"></div>
   </main>

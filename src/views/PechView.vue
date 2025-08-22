@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
+import LoadingAuto from '@/components/LoadingAuto.vue'
 // const apiBase = import.meta.env.VITE_API_BASE
 import { getApiBase } from '@/config/api'
 
@@ -33,7 +34,7 @@ async function fetchPech() {
       error.value = data.message || 'Error getting pech data.'
     }
   } catch (err) {
-    error.value = 'Erro de rede: ' + err.message
+    error.value = 'Netwerk error: ' + err.message
   } finally {
     loading.value = false
   }
@@ -46,7 +47,9 @@ onMounted(() => {
 
 <template>
   <main id="main-content">
-    <div v-if="loading">Loading...</div>
+    <div v-if="loading" class="loading">
+      <LoadingAuto />
+    </div>
     <div v-else-if="error" class="error-message">{{ error }}</div>
     <div v-else v-html="content"></div>
   </main>

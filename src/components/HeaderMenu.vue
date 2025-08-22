@@ -2,34 +2,32 @@
   <header>
     <div class="header-container">
       <router-link to="/">
-        <img
-          id="caruur-logo-no-text"
-          src="./../assets/images/caruur.png"
-          alt="caruur logo"
-        />
+        <img id="caruur-logo-no-text" src="./../assets/images/caruur.png" alt="caruur logo" />
       </router-link>
       <div style="display: flex; justify-content: center; align-items: center">
-        <span class="license" v-if="plates.length === 0">00-000-00</span>
-        <span
-          class="license"
-          v-else-if="plates.length === 1"
-          v-for="v in plates"
-          :key="v.ID"
-          :value="v.ID"
-          >{{ v.Numberplate }}</span
-        >
-        <select
-          class="license"
-          name="numberplates"
-          id="numberplates"
-          @change="onSelectChange"
-          v-model="selectedVehicleId"
-          v-else
-        >
-          <option v-for="v in plates" :key="v.ID" :value="v.ID">
-            {{ v.Numberplate }}
-          </option>
-        </select>
+        <!-- <span class="license" v-if="plates.length === 0">00-000-00</span> -->
+        <template v-if="plates.length !== 0">
+          <span
+            class="license"
+            v-if="plates.length === 1"
+            v-for="v in plates"
+            :key="v.ID"
+            :value="v.ID"
+            >{{ v.Numberplate }}</span
+          >
+          <select
+            class="license"
+            name="numberplates"
+            id="numberplates"
+            @change="onSelectChange"
+            v-model="selectedVehicleId"
+            v-else
+          >
+            <option v-for="v in plates" :key="v.ID" :value="v.ID">
+              {{ v.Numberplate }}
+            </option>
+          </select>
+        </template>
       </div>
       <span @click="openMenu">
         <i class="fa-solid fa-bars fa-2xl" id="menu-toggle"></i>
