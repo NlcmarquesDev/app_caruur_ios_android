@@ -174,7 +174,7 @@ main {
   display: flex;
   flex-direction: column;
   align-items: center;
-  border: 1px solid var(--text-color);
+  /* border: 1px solid var(--text-color); */
   border-radius: 5px;
   gap: 5px;
   background-color: white;

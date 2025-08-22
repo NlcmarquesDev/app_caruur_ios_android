@@ -10,14 +10,14 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { defineProps, computed } from 'vue'
 // const baseUrl = import.meta.env.BASE_URL
 const props = defineProps({
   path: String,
   sourceIcon: String,
   name: String,
   notification: {
-    type: Number,
+    type: [Number, String],
     default: 0,
   },
 })
@@ -25,10 +25,7 @@ const props = defineProps({
 const imagePath = computed(() => {
   return new URL(`/src/assets/images/${props.sourceIcon}`, import.meta.url).href
 })
-let alert = false
-if (props.notification !== 0) {
-  alert = true
-}
+const alert = computed(() => props.notification !== 0)
 </script>
 
 <style scoped>

@@ -33,11 +33,7 @@ const getLastNotification = async () => {
       let lastNotificationWrite = data.lastMessage
 
       let differencelastMessage = lastNotificationWrite - lastNotificationSeen
-      if (differencelastMessage > 100) {
-        notification.value = '+99'
-      } else {
-        notification.value = differencelastMessage
-      }
+      notification.value = differencelastMessage > 99 ? '+99' : differencelastMessage
     }
   } catch (err) {
     console.error('Network error:', err.message)
@@ -61,7 +57,7 @@ onMounted(() => {
         path="/meldingen"
         sourceIcon="meldingen.svg"
         name="meldingen"
-        :notification="Number(notification)"
+        :notification="notification"
       />
       <IconMenu path="/contact" sourceIcon="contact.svg" name="Contact" />
     </section>

@@ -13,9 +13,10 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <meta name="format-detection" content="telephone=no">
   <meta name="mobile-web-app-capable" content="yes">
+  <meta http-equiv="Content-Security-Policy" content="https://cdnjs.cloudflare.com 'self' 'unsafe-inline';">
   <!-- FOR THE DEV DEVELOPMENT -->
   <meta http-equiv="Content-Security-Policy"
-    content="default-src 'self' data: https: ws:; img-src 'self' data: https:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline';" />
+    content="default-src 'self' data: https: ws:; img-src 'self' data: https:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline';https://cdnjs.cloudflare.com;" />
   <!-- FOR THE APP ANDROID -->
   <!-- <meta http-equiv="Content-Security-Policy" content="default-src *; img-src * data:;"> -->
 
