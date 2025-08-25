@@ -4,6 +4,8 @@ import HeaderMenu from '@/components/HeaderMenu.vue'
 import { ref, provide, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useTheme } from '@/assets/JS/useTheme.js'
+// import { initPush } from '@/composables/pushService'
+// initPush()
 
 useTheme()
 
