@@ -36,6 +36,31 @@ async function fetchInfoBanden() {
     const data = await res.json()
     if (data.success) {
       let html = ''
+
+      let supplier
+
+      if (data.supplier == '-1') {
+        supplier = 'NOG NIET GEKEND'
+      } else if (data.supplier == '-2') {
+        supplier = 'NIET INBEGREPEN'
+      } else if (data.supplierInfo) {
+        const adress = `${data.supplierInfo.AddressLine1}, ${data.supplierInfo.PostalCode} ${data.supplierInfo.City}, ${data.supplierInfo.CountryCode}`
+        const mapsLink = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(adress)}`
+        supplier = `
+          <a href="${mapsLink}" target="_blank" rel="noopener noreferrer">
+            <span>${data.supplierInfo.CompanyName}</span><br>
+            <span>${data.supplierInfo.AddressLine1}</span><br>
+            <span>${data.supplierInfo.PostalCode} ${data.supplierInfo.City} - ${data.supplierInfo.CountryCode}</span><br>
+        </a>
+        `
+      } else {
+        supplier = '-'
+      }
+
+      let leverancier = `<div>
+        <p><strong> Leverancier: </strong></p>
+        <span>${supplier}</span>
+        </div>`
       if (data.content === null || data.content.length === 0) {
         if (data.aantalBanden === 0) {
           infoBanden.value = 'No tires registered for this vehicle.'
@@ -46,7 +71,9 @@ async function fetchInfoBanden() {
           </div>
         `
           html += `<p><strong> TOTAAL: </strong>${data.aantalBanden} banden (0 resterend) </p>`
-          infoBanden.value = html
+          html += '<p>Geen banden opgenomen</p>'
+          html += leverancier
+          // infoBanden.value = html
         }
       } else {
         let total = ''
@@ -94,8 +121,10 @@ async function fetchInfoBanden() {
         html += ` <div class="banden-item">
                     ${total}
                   </div>`
-        infoBanden.value = html
+        html += leverancier
       }
+
+      infoBanden.value = html
 
       loading.value = false
     } else {
