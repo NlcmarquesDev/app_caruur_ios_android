@@ -4,5 +4,14 @@
   "webDir": "dist",
   "server": {
     "cleartext": true
+  },
+  "plugins": {
+    "PushNotifications": {
+      "presentationOptions": ["badge", "sound", "alert"]
+    }
+  },
+  "android": {
+    "backgroundColor": "#FFFFFF",
+    "icon": "assets/icon.png"
   }
 }

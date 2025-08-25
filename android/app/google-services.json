@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "562573137207",
+    "project_id": "caruur-app",
+    "storage_bucket": "caruur-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:562573137207:android:b3b5989899f21a483cb6b2",
+        "android_client_info": {
+          "package_name": "com.caruur.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDy1zYtALDgkBCVIlqoj3JinsCsZY10ugw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
