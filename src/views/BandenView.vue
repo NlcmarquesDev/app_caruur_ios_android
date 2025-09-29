@@ -47,10 +47,13 @@ async function fetchInfoBanden() {
         const adress = `${data.supplierInfo.AddressLine1}, ${data.supplierInfo.PostalCode} ${data.supplierInfo.City}, ${data.supplierInfo.CountryCode}`
         const mapsLink = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(adress)}`
         supplier = `
-          <a href="${mapsLink}" target="_blank" rel="noopener noreferrer">
+          <a href="${mapsLink}" target="_blank" rel="noopener noreferrer" class="location">
+          <div><i class="fa-solid fa-location-dot" style="color:red; font-size:30px" ></i></div>
+          <div>
             <span>${data.supplierInfo.CompanyName}</span><br>
             <span>${data.supplierInfo.AddressLine1}</span><br>
             <span>${data.supplierInfo.PostalCode} ${data.supplierInfo.City} - ${data.supplierInfo.CountryCode}</span><br>
+        </div>
         </a>
         `
       } else {
@@ -68,6 +71,9 @@ async function fetchInfoBanden() {
           html += `
         <div class="banden-aantal">
           <h3>Aantal Banden :  ${data.aantalBanden}</h3>
+
+          <h3>Maat Banden :  ${data.BandenMaat ?? 'Geen maat'}</h3>
+
           </div>
         `
           html += `<p><strong> TOTAAL: </strong>${data.aantalBanden} banden (0 resterend) </p>`
@@ -81,6 +87,7 @@ async function fetchInfoBanden() {
         html += `
         <div class="banden-aantal">
           <h3>Aantal Banden :  ${data.aantalBanden}</h3>
+          <h3>Maat Banden :  ${data.BandenMaat ?? 'Geen maat'}</h3>
           </div>
         `
 
@@ -192,5 +199,11 @@ main {
 }
 .banden-item p {
   font-size: 16px;
+}
+.location {
+  display: flex;
+  /* justify-content: center; */
+  align-items: center;
+  gap: 10px;
 }
 </style>

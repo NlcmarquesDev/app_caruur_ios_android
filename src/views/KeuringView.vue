@@ -16,6 +16,7 @@ const showLastkeuring = ref(false)
 const showGeenkeuring = ref(false)
 const selectedVehicle = inject('selectedVehicleId')
 const geenMessage = ref('Geen keuring')
+const differenceInDays = ref('')
 // const apiBase = import.meta.env.VITE_API_BASE
 import { getApiBase } from '@/config/api'
 
@@ -67,10 +68,11 @@ const latestMaintence = async () => {
     //JS to create the calenders
     if (data.content[0].length !== 0) {
       const lastMaintence = data.content[0]['DatumTechnischeControle']
+      const currentDate = new Date()
       console.log('Last Maintence:', lastMaintence)
       if (lastMaintence !== null && lastMaintence !== '') {
         const lastDate = new Date(lastMaintence)
-        const currentDate = new Date()
+        // const currentDate = new Date()
 
         const tenYearsAgo = new Date()
         tenYearsAgo.setFullYear(currentDate.getFullYear() - 10)
@@ -92,6 +94,11 @@ const latestMaintence = async () => {
         dayNext.value = NextDate.getDate()
         yearNext.value = NextDate.getFullYear()
         showkeuring.value = true
+
+        NextDate.setHours(0, 0, 0, 0)
+        currentDate.setHours(0, 0, 0, 0)
+        let differenceInMS = NextDate - currentDate
+        differenceInDays.value = Math.floor(differenceInMS / (1000 * 60 * 60 * 24))
       }
     } else {
       showGeenkeuring.value = true
@@ -118,6 +125,10 @@ watch(selectedVehicle, (newId, oldId) => {
     <div v-else-if="error" class="error-message">{{ error }}</div>
     <div v-else v-html="content"></div>
     <section class="keuring" v-show="showkeuring">
+      <p style="text-align: center">
+        Nog <strong style="color: var(--primary-color)">{{ differenceInDays }}</strong> dagen tot de
+        volgende keuring
+      </p>
       <h2>Volgende keuring</h2>
       <div class="keuring-container">
         <div class="keuring-calender">
