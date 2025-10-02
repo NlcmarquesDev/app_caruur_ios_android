@@ -1,6 +1,8 @@
 <script setup>
 import { ref, onMounted, inject, watch } from 'vue'
 import LoadingAuto from '@/components/LoadingAuto.vue'
+import { getApiBase } from '@/config/api'
+import WarningMissingDays from '@/components/WarningMissingDays.vue'
 
 const content = ref('')
 const error = ref('')
@@ -18,7 +20,6 @@ const selectedVehicle = inject('selectedVehicleId')
 const geenMessage = ref('Geen keuring')
 const differenceInDays = ref('')
 // const apiBase = import.meta.env.VITE_API_BASE
-import { getApiBase } from '@/config/api'
 
 const apiBase = getApiBase()
 
@@ -63,17 +64,13 @@ const latestMaintence = async () => {
     }
     loading.value = false
     const data = await response.json()
-    console.log(data.content[0])
 
     //JS to create the calenders
     if (data.content[0].length !== 0) {
       const lastMaintence = data.content[0]['DatumTechnischeControle']
       const currentDate = new Date()
-      console.log('Last Maintence:', lastMaintence)
       if (lastMaintence !== null && lastMaintence !== '') {
         const lastDate = new Date(lastMaintence)
-        // const currentDate = new Date()
-
         const tenYearsAgo = new Date()
         tenYearsAgo.setFullYear(currentDate.getFullYear() - 10)
         if (lastDate < tenYearsAgo) {
@@ -87,7 +84,6 @@ const latestMaintence = async () => {
         }
       }
       const NextMaintence = data.content[0]['NextInspectionDate']
-      console.log('Next Maintence:', NextMaintence)
       if (NextMaintence !== null && NextMaintence !== '') {
         const NextDate = new Date(NextMaintence)
         monthNext.value = NextDate.toLocaleString('default', { month: 'long' })
@@ -125,10 +121,11 @@ watch(selectedVehicle, (newId, oldId) => {
     <div v-else-if="error" class="error-message">{{ error }}</div>
     <div v-else v-html="content"></div>
     <section class="keuring" v-show="showkeuring">
-      <p style="text-align: center">
+      <!-- <p style="text-align: center">
         Nog <strong style="color: var(--primary-color)">{{ differenceInDays }}</strong> dagen tot de
         volgende keuring
-      </p>
+      </p> -->
+      <WarningMissingDays text="keuring" :days="differenceInDays" />
       <h2>Volgende keuring</h2>
       <div class="keuring-container">
         <div class="keuring-calender">
