@@ -31,18 +31,18 @@ const title = ref('')
 const description = ref('')
 const urlLink = ref('')
 
-if (props.card.Active == 1) {
+if (props.card.active == 1) {
   newNews.value = props.card.new
   showCard.value = true
   // props.card.Active = 'Actief'
   title.value = props.card.Title
   description.value = props.card.Description
 
-  if (props.card.Favorite == 1) {
+  if (props.card.favoriete == 1) {
     favorite.value = true
   }
 
-  if (props.card.Link.length !== 0) {
+  if (props.card.link && props.card.link.length !== 0) {
     ShowLink.value = true
     urlLink.value = props.card.Link || '#'
   }

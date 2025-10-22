@@ -17,6 +17,7 @@ const showGeenkeuring = ref(false)
 const selectedVehicle = inject('selectedVehicleId')
 const geenMessage = ref('Geen keuring')
 const differenceInDays = ref('')
+const message = ref('')
 // const apiBase = import.meta.env.VITE_API_BASE
 import { getApiBase } from '@/config/api'
 
@@ -99,6 +100,18 @@ const latestMaintence = async () => {
         currentDate.setHours(0, 0, 0, 0)
         let differenceInMS = NextDate - currentDate
         differenceInDays.value = Math.floor(differenceInMS / (1000 * 60 * 60 * 24))
+
+        if (differenceInDays.value < 0) {
+          message.value = `De keuring was <strong style="color: var(--primary-color)">
+            ${Math.abs(differenceInDays.value)}
+          </strong> dagen geleden.`
+        } else if (differenceInDays.value === 0) {
+          message.value = `De keuring is <strong style="color: var(--primary-color)">vandaag</strong>.`
+        } else {
+          message.value = `Nog <strong style="color: var(--primary-color)">
+            ${differenceInDays.value}
+          </strong> dagen tot de volgende keuring.`
+        }
       }
     } else {
       showGeenkeuring.value = true
@@ -125,10 +138,7 @@ watch(selectedVehicle, (newId, oldId) => {
     <div v-else-if="error" class="error-message">{{ error }}</div>
     <div v-else v-html="content"></div>
     <section class="keuring" v-show="showkeuring">
-      <p style="text-align: center">
-        Nog <strong style="color: var(--primary-color)">{{ differenceInDays }}</strong> dagen tot de
-        volgende keuring
-      </p>
+      <p style="text-align: center" v-html="message"></p>
       <h2>Volgende keuring</h2>
       <div class="keuring-container">
         <div class="keuring-calender">

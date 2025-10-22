@@ -29,7 +29,8 @@ const vehicles = async () => {
     }
     const data = await response.json()
     sessionStorage.setItem('vehicles', JSON.stringify(data))
-    sessionStorage.setItem('selectedVehicle', data.vehicles[0].ID)
+    let vehiclesSelected = data.vehicles && data.vehicles.length > 0 ? data.vehicles[0].ID : null
+    sessionStorage.setItem('selectedVehicle', vehiclesSelected)
     return data
   } catch (error) {
     console.error('Error in the request:', error)
