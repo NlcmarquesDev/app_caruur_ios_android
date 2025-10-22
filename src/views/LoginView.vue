@@ -1,6 +1,6 @@
 <template>
   <div class="logo-container">
-    <img class="logo" src="./../assets/images/logo-without-text.jpg" alt="Caruur logo" />
+    <img class="logo" :src="logo" alt="Caruur logo" />
   </div>
 
   <div class="login-container">
@@ -55,6 +55,7 @@
 
 <script setup>
 // const apiBase = import.meta.env.VITE_API_BASE
+import logo from '@/assets/images/logo.png'
 import { getApiBase } from '@/config/api'
 import { Preferences } from '@capacitor/preferences'
 
