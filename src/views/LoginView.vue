@@ -54,10 +54,11 @@
 </template>
 
 <script setup>
-// const apiBase = import.meta.env.VITE_API_BASE
 import logo from '@/assets/images/logo.png'
 import { getApiBase } from '@/config/api'
 import { Preferences } from '@capacitor/preferences'
+
+// import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin'
 
 const apiBase = getApiBase()
 import { ref, onMounted } from 'vue'
@@ -72,13 +73,7 @@ const remember = ref(false)
 function togglePassword() {
   showPassword.value = !showPassword.value
 }
-// onMounted(() => {
-//   const savedEmail = localStorage.getItem('savedEmail')
-//   if (savedEmail) {
-//     email.value = savedEmail
-//     remember.value = true
-//   }
-// })
+
 onMounted(async () => {
   const { value: savedApiKey } = await Preferences.get({ key: 'apiKey' })
   const { value: savedContactID } = await Preferences.get({ key: 'contactID' })
@@ -91,14 +86,7 @@ onMounted(async () => {
 })
 
 async function handleLogin() {
-  // if (remember.value) {
-  //   localStorage.setItem('savedEmail', email.value)
-  // } else {
-  //   localStorage.removeItem('savedEmail')
-  // }
-
   try {
-    // const res = await fetch('/api/app_webservice/authenticate.php', {
     const res = await fetch(`${apiBase}/authenticate.php`, {
       method: 'POST',
       credentials: 'include',
@@ -113,11 +101,11 @@ async function handleLogin() {
 
     const data = await res.json()
 
-    // if (data.success) {
-    //   sessionStorage.setItem('apiKey', data.api_key)
-    //   sessionStorage.setItem('contactID', data.user['ContactID'])
-    //   router.push({ name: 'home' })
     if (data.success) {
+      // await SecureStoragePlugin.set({ key: 'access_token', value: data.access_token })
+      // await SecureStoragePlugin.set({ key: 'refresh_token', value: data.refresh_token })
+      // await SecureStoragePlugin.set({ key: 'contactID', value: data.user.ContactID })
+
       sessionStorage.setItem('apiKey', data.api_key)
       sessionStorage.setItem('contactID', data.user['ContactID'])
 

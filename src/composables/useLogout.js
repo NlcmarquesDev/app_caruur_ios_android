@@ -13,6 +13,13 @@ export function useLogout() {
     router.push({ name: 'login' })
   }
 
+  //   async function logout() {
+  //   await SecureStoragePlugin.remove({ key: 'access_token' })
+  //   await SecureStoragePlugin.remove({ key: 'refresh_token' })
+  //   await SecureStoragePlugin.remove({ key: 'contactID' })
+  //   router.push({ name: 'login' })
+  // }
+
   return {
     logoutUser,
   }
