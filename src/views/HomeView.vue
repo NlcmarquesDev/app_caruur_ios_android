@@ -1,33 +1,34 @@
 <script setup>
 import IconMenu from '@/components/IconMenu.vue'
 import { onMounted, ref } from 'vue'
-// const apiBase = import.meta.env.VITE_API_BASE
-import { getApiBase } from '@/config/api'
+// import { getApiBase } from '@/config/api'
+import { apiFetch } from '@/composables/api'
 
-const apiBase = getApiBase()
+// const apiBase = getApiBase()
 
 const notification = ref('')
 
 const getLastNotification = async () => {
-  const apiKey = sessionStorage.getItem('apiKey')
-  if (!apiKey) {
-    console.err('API key not found.')
-    return
-  }
+  // const apiKey = sessionStorage.getItem('apiKey')
+  // if (!apiKey) {
+  //   console.err('API key not found.')
+  //   return
+  // }
 
   try {
-    // const res = await fetch('/api/app_webservice/meldingen-notifcations.php?action=info', {
-    const res = await fetch(`${apiBase}/meldingen-notifcations.php?action=info`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + apiKey,
-      },
-    })
-    if (!res.ok) {
-      throw new Error(`HTTP error! status: ${res.status}`)
-    }
-    const data = await res.json()
+    // const res = await fetch(`${apiBase}/meldingen-notifcations.php?action=info`, {
+    //   method: 'GET',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //     Authorization: 'Bearer ' + apiKey,
+    //   },
+    // })
+    // if (!res.ok) {
+    //   throw new Error(`HTTP error! status: ${res.status}`)
+    // }
+    // const data = await res.json()
+    const data = await apiFetch('meldingen-notifcations.php?action=info', { method: 'GET' })
+    if (!data) return
     if (data.success) {
       let lastNotificationSeen = data.messages || 0
       let lastNotificationWrite = data.lastMessage

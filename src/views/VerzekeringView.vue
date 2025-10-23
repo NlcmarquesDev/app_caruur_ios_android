@@ -2,33 +2,38 @@
 import ButtonStandart from '@/components/ButtonStandart.vue'
 import { inject } from 'vue'
 // const apiBase = import.meta.env.VITE_API_BASE
-import { getApiBase } from '@/config/api'
+// import { getApiBase } from '@/config/api'
 import { Capacitor } from '@capacitor/core'
+import { apiFetch } from '@/composables/api'
 // import { Browser } from '@capacitor/browser'
 import { Filesystem, Directory } from '@capacitor/filesystem'
 import { FileOpener } from '@capacitor-community/file-opener'
 
-const apiBase = getApiBase()
+// const apiBase = getApiBase()
 const selectedVehicle = inject('selectedVehicleId')
-const apiKey = sessionStorage.getItem('apiKey')
+// const apiKey = sessionStorage.getItem('apiKey')
 const isNative = Capacitor.isNativePlatform()
 
 const handlerPreview = async (selectedVehicle) => {
   if (selectedVehicle) {
-    const res = await fetch(
-      `${apiBase}/insurance-green-card.php?vehicleId=${selectedVehicle}`,
-      // '/api/app_webservice/insurance-green-card.php?vehicleId=' + selectedVehicle,
-      {
-        method: 'GET',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + apiKey,
-        },
-      },
-    )
+    // const res = await fetch(
+    //   `${apiBase}/insurance-green-card.php?vehicleId=${selectedVehicle}`,
+    //   // '/api/app_webservice/insurance-green-card.php?vehicleId=' + selectedVehicle,
+    //   {
+    //     method: 'GET',
+    //     credentials: 'include',
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //       Authorization: 'Bearer ' + apiKey,
+    //     },
+    //   },
+    // )
 
-    const data = await res.json()
+    // const data = await res.json()
+    const data = await apiFetch(`insurance-green-card.php?vehicleId=${selectedVehicle}`, {
+      method: 'GET',
+    })
+    if (!data) return
     if (data.success) {
       const base64Pdf = data.greencard
       const mimeType = 'application/pdf'
@@ -77,20 +82,24 @@ const handlerDownload = async (selectedVehicle) => {
     return
   }
   try {
-    const res = await fetch(
-      `${apiBase}/insurance-green-card.php?vehicleId=${selectedVehicle}`,
-      // '/api/app_webservice/insurance-green-card.php?vehicleId=' + selectedVehicle,
-      {
-        method: 'GET',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + apiKey,
-        },
-      },
-    )
+    // const res = await fetch(
+    //   `${apiBase}/insurance-green-card.php?vehicleId=${selectedVehicle}`,
+    //   // '/api/app_webservice/insurance-green-card.php?vehicleId=' + selectedVehicle,
+    //   {
+    //     method: 'GET',
+    //     credentials: 'include',
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //       Authorization: 'Bearer ' + apiKey,
+    //     },
+    //   },
+    // )
 
-    const data = await res.json()
+    // const data = await res.json()
+    const data = await apiFetch(`insurance-green-card.php?vehicleId=${selectedVehicle}`, {
+      method: 'GET',
+    })
+    if (!data) return
     const base64String = data.greencard
     const mimeType = 'application/pdf'
     const fileName = selectedVehicle + 'green-card.pdf'

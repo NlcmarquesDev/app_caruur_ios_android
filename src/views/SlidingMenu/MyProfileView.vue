@@ -128,10 +128,12 @@
 import ButtonInput from '@/components/ButtonInput.vue'
 import ShowAlert from '@/components/ShowAlert.vue'
 import { ref, onMounted } from 'vue'
+import { apiFetch } from '@/composables/api.js'
 // const apiBase = import.meta.env.VITE_API_BASE
 import { getApiBase } from '@/config/api'
+import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin'
 
-const apiBase = getApiBase()
+// const apiBase = getApiBase()
 
 const error = ref('')
 const errormessage = ref('')
@@ -151,31 +153,36 @@ const country = ref('')
 const cancelBtn = 'cancel-btn'
 const saveBtn = 'save-btn'
 
-function getAPIKey() {
-  const apiKey = sessionStorage.getItem('apiKey')
-  if (!apiKey) {
-    error.value = 'API key not found.'
-    loading.value = false
-    return null
-  }
-  return apiKey
-}
+// function getAPIKey() {
+//   const apiKey = sessionStorage.getItem('apiKey')
+//   if (!apiKey) {
+//     error.value = 'API key not found.'
+//     loading.value = false
+//     return null
+//   }
+//   return apiKey
+// }
 async function fetchGetInfoUser() {
-  let apiKey = getAPIKey()
-  let contactID = sessionStorage.getItem('contactID')
+  // let apiKey = getAPIKey()
+  // let contactID = sessionStorage.getItem('contactID')
+  let contactID = await SecureStoragePlugin.get({ key: 'contactID' })
   try {
-    const res = await fetch(
-      // '/api/app_webservice/settings.php?action=getInfo&contact=' + contactID,
-      `${apiBase}/settings.php?action=getInfo&contact=` + contactID,
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + apiKey,
-        },
-      },
-    )
-    const data = await res.json()
+    // const res = await fetch(
+    //   // '/api/app_webservice/settings.php?action=getInfo&contact=' + contactID,
+    //   `${apiBase}/settings.php?action=getInfo&contact=` + contactID,
+    //   {
+    //     method: 'GET',
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //       Authorization: 'Bearer ' + apiKey,
+    //     },
+    //   },
+    // )
+    // const data = await res.json()
+    const data = await apiFetch(`settings.php?action=getInfo&contact=${contactID.value}`, {
+      method: 'GET',
+    })
+    if (!data) return
     if (data.success) {
       if (data.content !== null || data.content.length !== 0) {
         firstName.value = data.content.FirstName || data.content.CompanyName
@@ -194,7 +201,7 @@ async function fetchGetInfoUser() {
 }
 
 async function handleNewPass() {
-  let apiKey = getAPIKey()
+  // let apiKey = getAPIKey()
   if (!newPass.value || !confirmPass.value || !currentPass.value) {
     showMessage('all need to be insert')
     return
@@ -206,20 +213,22 @@ async function handleNewPass() {
   }
   try {
     // const res = await fetch('/api/app_webservice/newPassword.php', {
-    const res = await fetch(`${apiBase}/newPassword.php`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + apiKey,
-      },
-      body: JSON.stringify({
-        currentPass: currentPass.value,
-        newPassword: newPass.value,
-      }),
-    })
+    // const res = await fetch(`${apiBase}/newPassword.php`, {
+    //   method: 'POST',
+    //   credentials: 'include',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //     Authorization: 'Bearer ' + apiKey,
+    //   },
+    //   body: JSON.stringify({
+    //     currentPass: currentPass.value,
+    //     newPassword: newPass.value,
+    //   }),
+    // })
 
-    const data = await res.json()
+    // const data = await res.json()
+    const data = await apiFetch(`newPassword.php`, { method: 'POST' })
+    if (!data) return
 
     if (data.success) {
       showMessage(data.content, 'success')
@@ -348,7 +357,7 @@ section {
   padding: 12px 15px;
   border: 1px solid #333;
   background-color: var(--bg-input);
-  color: white;
+  color: var(--bg-text);
   border-radius: 5px;
   font-size: 1em;
   transition: border-color 0.3s ease;

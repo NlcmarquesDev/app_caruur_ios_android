@@ -4,7 +4,12 @@
     <span v-if="!alert">{{ name }}</span>
     <span v-else class="notification"
       >meldingen
-      <span v-if="notification !== 0" class="notification-ball">{{ notification }}</span></span
+      <span
+        v-show="Number(notification) >= 1"
+        v-if="notification !== 0"
+        class="notification-ball"
+        >{{ notification }}</span
+      ></span
     >
   </router-link>
 </template>

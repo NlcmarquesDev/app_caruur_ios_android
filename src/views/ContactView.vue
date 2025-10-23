@@ -1,33 +1,36 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import LoadingAuto from '@/components/LoadingAuto.vue'
+import { apiFetch } from '@/composables/api'
 
 const content = ref('')
 const error = ref('')
 const loading = ref(true)
 // const apiBase = import.meta.env.VITE_API_BASE
-import { getApiBase } from '@/config/api'
+// import { getApiBase } from '@/config/api'
 
-const apiBase = getApiBase()
+// const apiBase = getApiBase()
 
 async function fetchContact() {
-  const apiKey = sessionStorage.getItem('apiKey')
-  if (!apiKey) {
-    error.value = 'API key not found.'
-    loading.value = false
-    return
-  }
+  // const apiKey = sessionStorage.getItem('apiKey')
+  // if (!apiKey) {
+  //   error.value = 'API key not found.'
+  //   loading.value = false
+  //   return
+  // }
 
   try {
     // const res = await fetch('/api/app_webservice/contact.php', {
-    const res = await fetch(`${apiBase}/contact.php`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + apiKey,
-      },
-    })
-    const data = await res.json()
+    // const res = await fetch(`${apiBase}/contact.php`, {
+    //   method: 'GET',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //     Authorization: 'Bearer ' + apiKey,
+    //   },
+    // })
+    // const data = await res.json()
+    const data = await apiFetch(`contact.php`, { method: 'GET' })
+    if (!data) return
     if (data.success) {
       content.value = data.content
     } else {

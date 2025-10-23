@@ -2,6 +2,7 @@
 import { ref, onMounted, inject, watch } from 'vue'
 import LoadingAuto from '@/components/LoadingAuto.vue'
 import { getApiBase } from '@/config/api'
+import { apiFetch } from '@/composables/api'
 import WarningMissingDays from '@/components/WarningMissingDays.vue'
 
 const content = ref('')
@@ -41,30 +42,32 @@ function resetData() {
 const latestMaintence = async () => {
   resetData()
   loading.value = true
-  const apiKey = sessionStorage.getItem('apiKey')
+  // const apiKey = sessionStorage.getItem('apiKey')
 
-  if (!apiKey) {
-    console.warn('API key not found.')
-    return
-  }
+  // if (!apiKey) {
+  //   console.warn('API key not found.')
+  //   return
+  // }
   const vehicleID = selectedVehicle.value
 
   try {
     // const response = await fetch('/api/app_webservice/keuring.php?model=' + vehicleID, {
-    const response = await fetch(`${apiBase}/keuring.php?model=${vehicleID}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + apiKey,
-      },
-    })
+    // const response = await fetch(`${apiBase}/keuring.php?model=${vehicleID}`, {
+    //   method: 'GET',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //     Authorization: 'Bearer ' + apiKey,
+    //   },
+    // })
+    const data = await apiFetch(`keuring.php?model=${vehicleID}`, { method: 'GET' })
+    if (!data) return
 
-    if (!response.ok) {
-      console.error('Error getting vehicles:', response.status)
-      return
-    }
+    // if (!response.ok) {
+    //   console.error('Error getting vehicles:', response.status)
+    //   return
+    // }
     loading.value = false
-    const data = await response.json()
+    // const data = await response.json()
 
     //JS to create the calenders
     if (data.content[0].length !== 0) {

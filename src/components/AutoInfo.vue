@@ -85,7 +85,8 @@
 <script setup>
 import ShowAlert from '@/components/ShowAlert.vue'
 import { ref, reactive, watch } from 'vue'
-const apiBase = import.meta.env.VITE_API_BASE
+import { apiFetch } from '@/composables/api'
+// const apiBase = import.meta.env.VITE_API_BASE
 
 const props = defineProps({
   id: Number,
@@ -117,30 +118,32 @@ const options = reactive({
   tires: false,
 })
 fetchGetInfoAuto()
-function getAPIKey() {
-  const apiKey = sessionStorage.getItem('apiKey')
-  if (!apiKey) {
-    error.value = 'API key not found.'
-    loading.value = false
-    return null
-  }
-  return apiKey
-}
+// function getAPIKey() {
+//   const apiKey = sessionStorage.getItem('apiKey')
+//   if (!apiKey) {
+//     error.value = 'API key not found.'
+//     loading.value = false
+//     return null
+//   }
+//   return apiKey
+// }
 async function fetchGetInfoAuto() {
-  let apiKey = getAPIKey()
+  // let apiKey = getAPIKey()
   try {
     // const res = await fetch('/api/app_webservice/auto-info.php?contract=' + props.contractId, {
-    const res = await fetch(`${apiBase}/auto-info.php?contract=${props.contractId}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + apiKey,
-      },
-    })
-    if (!res.ok) {
-      throw new Error(`HTTP error! status: ${res.status}`)
-    }
-    const data = await res.json()
+    // const res = await fetch(`${apiBase}/auto-info.php?contract=${props.contractId}`, {
+    //   method: 'GET',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //     Authorization: 'Bearer ' + apiKey,
+    //   },
+    // })
+    // if (!res.ok) {
+    //   throw new Error(`HTTP error! status: ${res.status}`)
+    // }
+    // const data = await res.json()
+    const data = await apiFetch(`auto-info.php?contract=${props.contractId}`, { method: 'GET' })
+    if (!data) return
     if (data.success) {
       if (data.content && Object.keys(data.content).length > 0) {
         let typeAuto = data.content.Merk + ' ' + data.content.Type || ''

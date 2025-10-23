@@ -1,6 +1,7 @@
 import { useRouter } from 'vue-router'
-import { logout } from '@/assets/JS/isAuth.js'
-import { Preferences } from '@capacitor/preferences'
+// import { logout } from '@/assets/JS/isAuth.js'
+// import { Preferences } from '@capacitor/preferences'
+import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin'
 
 export function useLogout() {
   const router = useRouter()
@@ -8,17 +9,17 @@ export function useLogout() {
   async function logoutUser() {
     logout()
     sessionStorage.clear()
-    await Preferences.remove({ key: 'apiKey' })
-    await Preferences.remove({ key: 'contactID' })
-    router.push({ name: 'login' })
+    // await Preferences.remove({ key: 'apiKey' })
+    // await Preferences.remove({ key: 'contactID' })
+    // router.push({ name: 'login' })
   }
 
-  //   async function logout() {
-  //   await SecureStoragePlugin.remove({ key: 'access_token' })
-  //   await SecureStoragePlugin.remove({ key: 'refresh_token' })
-  //   await SecureStoragePlugin.remove({ key: 'contactID' })
-  //   router.push({ name: 'login' })
-  // }
+  async function logout() {
+    await SecureStoragePlugin.remove({ key: 'access_token' })
+    await SecureStoragePlugin.remove({ key: 'refresh_token' })
+    await SecureStoragePlugin.remove({ key: 'contactID' })
+    router.push({ name: 'login' })
+  }
 
   return {
     logoutUser,

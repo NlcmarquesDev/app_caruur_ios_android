@@ -58,7 +58,7 @@ import logo from '@/assets/images/logo.png'
 import { getApiBase } from '@/config/api'
 import { Preferences } from '@capacitor/preferences'
 
-// import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin'
+import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin'
 
 const apiBase = getApiBase()
 import { ref, onMounted } from 'vue'
@@ -75,13 +75,31 @@ function togglePassword() {
 }
 
 onMounted(async () => {
-  const { value: savedApiKey } = await Preferences.get({ key: 'apiKey' })
-  const { value: savedContactID } = await Preferences.get({ key: 'contactID' })
+  // const { value: savedApiKey } = await Preferences.get({ key: 'apiKey' })
+  // const { value: savedContactID } = await Preferences.get({ key: 'contactID' })
 
-  if (savedApiKey && savedContactID) {
-    sessionStorage.setItem('apiKey', savedApiKey)
-    sessionStorage.setItem('contactID', savedContactID)
-    router.push({ name: 'home' })
+  // if (savedApiKey && savedContactID) {
+  //   sessionStorage.setItem('apiKey', savedApiKey)
+  //   sessionStorage.setItem('contactID', savedContactID)
+  //   router.push({ name: 'home' })
+  // }
+  // const accessTokenObj = await SecureStoragePlugin.get({ key: 'access_token' })
+  // const contactIDObj = await SecureStoragePlugin.get({ key: 'contactID' })
+
+  // if (accessTokenObj?.value && contactIDObj?.value) {
+  //   // Token existe → redireciona direto para home
+  //   router.push({ name: 'home' })
+  // }
+  try {
+    const { value: accessToken } = await SecureStoragePlugin.get({ key: 'access_token' })
+    const { value: contactID } = await SecureStoragePlugin.get({ key: 'contactID' })
+
+    if (accessToken && contactID) {
+      router.push({ name: 'home' })
+    }
+  } catch (e) {
+    // ⚠️ Se não houver tokens, o utilizador continua na página de login
+    console.log('Nenhum token guardado, continuar no login.')
   }
 })
 
@@ -102,17 +120,17 @@ async function handleLogin() {
     const data = await res.json()
 
     if (data.success) {
-      // await SecureStoragePlugin.set({ key: 'access_token', value: data.access_token })
-      // await SecureStoragePlugin.set({ key: 'refresh_token', value: data.refresh_token })
-      // await SecureStoragePlugin.set({ key: 'contactID', value: data.user.ContactID })
+      await SecureStoragePlugin.set({ key: 'access_token', value: data.access_token })
+      await SecureStoragePlugin.set({ key: 'refresh_token', value: data.refresh_token })
+      await SecureStoragePlugin.set({ key: 'contactID', value: data.user.ContactID })
 
-      sessionStorage.setItem('apiKey', data.api_key)
-      sessionStorage.setItem('contactID', data.user['ContactID'])
+      // sessionStorage.setItem('apiKey', data.api_key)
+      // sessionStorage.setItem('contactID', data.user['ContactID'])
 
-      if (remember.value) {
-        await Preferences.set({ key: 'apiKey', value: data.api_key })
-        await Preferences.set({ key: 'contactID', value: data.user['ContactID'] })
-      }
+      // if (remember.value) {
+      //   await Preferences.set({ key: 'apiKey', value: data.api_key })
+      //   await Preferences.set({ key: 'contactID', value: data.user['ContactID'] })
+      // }
 
       router.push({ name: 'home' })
     } else {

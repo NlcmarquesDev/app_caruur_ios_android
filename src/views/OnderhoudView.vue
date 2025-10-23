@@ -1,10 +1,11 @@
 <script setup>
 import { ref, onMounted, inject, watch } from 'vue'
 import LoadingAuto from '@/components/LoadingAuto.vue'
+import { apiFetch } from '@/composables/api'
 // const apiBase = import.meta.env.VITE_API_BASE
-import { getApiBase } from '@/config/api'
+// import { getApiBase } from '@/config/api'
 
-const apiBase = getApiBase()
+// const apiBase = getApiBase()
 
 const content = ref('')
 const error = ref('')
@@ -35,30 +36,32 @@ function resetData() {
 const latestMaintence = async () => {
   resetData()
   loading.value = true
-  const apiKey = sessionStorage.getItem('apiKey')
+  // const apiKey = sessionStorage.getItem('apiKey')
 
-  if (!apiKey) {
-    console.warn('API key not found.')
-    return
-  }
+  // if (!apiKey) {
+  //   console.warn('API key not found.')
+  //   return
+  // }
   const vehicleID = selectedVehicle.value
 
   try {
-    const response = await fetch(`${apiBase}/onderhoud.php?vehicleId=${vehicleID}`, {
-      // const response = await fetch('/api/app_webservice/onderhoud.php?vehicleId=' + vehicleID, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + apiKey,
-      },
-    })
+    // const response = await fetch(`${apiBase}/onderhoud.php?vehicleId=${vehicleID}`, {
+    //   // const response = await fetch('/api/app_webservice/onderhoud.php?vehicleId=' + vehicleID, {
+    //   method: 'GET',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //     Authorization: 'Bearer ' + apiKey,
+    //   },
+    // })
+    const data = await apiFetch(`onderhoud.php?vehicleId=${vehicleID}`, { method: 'GET' })
+    if (!data) return
 
-    if (!response.ok) {
-      console.error('Error getting vehicles:', response.status)
-      return
-    }
+    // if (!response.ok) {
+    //   console.error('Error getting vehicles:', response.status)
+    //   return
+    // }
     loading.value = false
-    const data = await response.json()
+    // const data = await response.json()
 
     //JS to create the calenders
 

@@ -4,42 +4,45 @@
 import ButtonStandart from '@/components/ButtonStandart.vue'
 import LoadingAuto from '@/components/LoadingAuto.vue'
 import { ref, onMounted } from 'vue'
-import { getApiBase } from '@/config/api'
+// import { getApiBase } from '@/config/api'
 import { Capacitor } from '@capacitor/core'
-import { Browser } from '@capacitor/browser'
+// import { Browser } from '@capacitor/browser'
 import { Filesystem, Directory } from '@capacitor/filesystem'
+import { apiFetch } from '@/composables/api'
 
-const apiBase = getApiBase()
+// const apiBase = getApiBase()
 const content = ref('')
 const error = ref('')
 const loading = ref(true)
 const isNative = Capacitor.isNativePlatform()
 
 const handlerdownload = async () => {
-  const apiKey = sessionStorage.getItem('apiKey')
-  if (!apiKey) {
-    error.value = 'API key not found.'
-    return
-  }
+  // const apiKey = sessionStorage.getItem('apiKey')
+  // if (!apiKey) {
+  //   error.value = 'API key not found.'
+  //   return
+  // }
   try {
-    const res = await fetch(`${apiBase}/aanrijdings-formulier.php`, {
-      // const res = await fetch('/api/app_webservice/aanrijdings-formulier.php', {
-      method: 'GET',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + apiKey,
-      },
-    })
+    // const res = await fetch(`${apiBase}/aanrijdings-formulier.php`, {
+    //   // const res = await fetch('/api/app_webservice/aanrijdings-formulier.php', {
+    //   method: 'GET',
+    //   credentials: 'include',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //     Authorization: 'Bearer ' + apiKey,
+    //   },
+    // })
 
-    const data = await res.json()
+    // const data = await res.json()
+    const data = await apiFetch(`aanrijdings-formulier.php`, { method: 'GET' })
+    if (!data) return
 
     const base64String = data.formulier
     const mimeType = 'application/pdf'
     const fileName = 'aanrijdings-formulier.pdf'
 
     if (isNative) {
-      // 📱 Mobile (Capacitor) → guarda no Filesystem
+      // 📱 Mobile (Capacitor)
       await Filesystem.writeFile({
         path: fileName,
         data: base64String,
@@ -72,23 +75,25 @@ const handlerdownload = async () => {
 }
 
 async function fetchContact() {
-  const apiKey = sessionStorage.getItem('apiKey')
-  if (!apiKey) {
-    error.value = 'API key not found.'
-    loading.value = false
-    return
-  }
+  // const apiKey = sessionStorage.getItem('apiKey')
+  // if (!apiKey) {
+  //   error.value = 'API key not found.'
+  //   loading.value = false
+  //   return
+  // }
 
   try {
-    const res = await fetch(`${apiBase}/ongeval.php`, {
-      // const res = await fetch('/api/app_webservice/ongeval.php', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + apiKey,
-      },
-    })
-    const data = await res.json()
+    // const res = await fetch(`${apiBase}/ongeval.php`, {
+    //   // const res = await fetch('/api/app_webservice/ongeval.php', {
+    //   method: 'GET',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //     Authorization: 'Bearer ' + apiKey,
+    //   },
+    // })
+    // const data = await res.json()
+    const data = await apiFetch(`ongeval.php`, { method: 'GET' })
+    if (!data) return
     if (data.success) {
       content.value = data.content
     } else {

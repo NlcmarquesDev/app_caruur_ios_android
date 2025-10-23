@@ -97,11 +97,23 @@ const router = createRouter({
   ],
 })
 
-router.beforeEach((to, from, next) => {
+// router.beforeEach((to, from, next) => {
+//   const publicRoutes = ['login', 'register']
+//   if (to.meta.requiresAuth && !isAuthenticated()) {
+//     next('/login')
+//   } else if (publicRoutes.includes(to.name) && isAuthenticated()) {
+//     next('/')
+//   } else {
+//     next()
+//   }
+// })
+router.beforeEach(async (to, from, next) => {
   const publicRoutes = ['login', 'register']
-  if (to.meta.requiresAuth && !isAuthenticated()) {
+  const authenticated = await isAuthenticated()
+
+  if (to.meta.requiresAuth && !authenticated) {
     next('/login')
-  } else if (publicRoutes.includes(to.name) && isAuthenticated()) {
+  } else if (publicRoutes.includes(to.name) && authenticated) {
     next('/')
   } else {
     next()

@@ -2,9 +2,10 @@
 import { ref, onMounted, computed } from 'vue'
 import LoadingAuto from '@/components/LoadingAuto.vue'
 // const apiBase = import.meta.env.VITE_API_BASE
-import { getApiBase } from '@/config/api'
+// import { getApiBase } from '@/config/api'
+import { apiFetch } from '@/composables/api'
 
-const apiBase = getApiBase()
+// const apiBase = getApiBase()
 
 const content = ref('')
 const infoBanden = ref('')
@@ -12,28 +13,30 @@ const error = ref('')
 const loading = ref(true)
 const carModel = sessionStorage.getItem('selectedVehicle')
 
-function getAPIKey() {
-  const apiKey = sessionStorage.getItem('apiKey')
-  if (!apiKey) {
-    error.value = 'API key not found.'
-    loading.value = false
-    return null
-  }
-  return apiKey
-}
+// function getAPIKey() {
+//   const apiKey = sessionStorage.getItem('apiKey')
+//   if (!apiKey) {
+//     error.value = 'API key not found.'
+//     loading.value = false
+//     return null
+//   }
+//   return apiKey
+// }
 
 async function fetchInfoBanden() {
-  let apiKey = getAPIKey()
+  // let apiKey = getAPIKey()
   try {
     // const res = await fetch('/api/app_webservice/banden.php?action=info&carModel=' + carModel, {
-    const res = await fetch(`${apiBase}/banden.php?action=info&carModel=${carModel}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + apiKey,
-      },
-    })
-    const data = await res.json()
+    // const res = await fetch(`${apiBase}/banden.php?action=info&carModel=${carModel}`, {
+    //   method: 'GET',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //     Authorization: 'Bearer ' + apiKey,
+    //   },
+    // })
+    // const data = await res.json()
+    const data = await apiFetch(`banden.php?action=info&carModel=${carModel}`, { method: 'GET' })
+    if (!data) return
     if (data.success) {
       let html = ''
 
@@ -145,18 +148,20 @@ async function fetchInfoBanden() {
 }
 
 async function fetchBanden() {
-  let apiKey = getAPIKey()
+  // let apiKey = getAPIKey()
 
   try {
     // const res = await fetch('/api/app_webservice/banden.php?action=message', {
-    const res = await fetch(`${apiBase}/banden.php?action=message`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + apiKey,
-      },
-    })
-    const data = await res.json()
+    // const res = await fetch(`${apiBase}/banden.php?action=message`, {
+    //   method: 'GET',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //     Authorization: 'Bearer ' + apiKey,
+    //   },
+    // })
+    // const data = await res.json()
+    const data = await apiFetch(`banden.php?action=message`, { method: 'GET' })
+    if (!data) return
     if (data.success) {
       content.value = data.content
     } else {

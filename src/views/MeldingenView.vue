@@ -3,54 +3,58 @@ import CardMessages from '@/components/CardMessages.vue'
 import LoadingAuto from '@/components/LoadingAuto.vue'
 import { ref, onMounted } from 'vue'
 // const apiBase = import.meta.env.VITE_API_BASE
-import { getApiBase } from '@/config/api'
+// import { getApiBase } from '@/config/api'
+import { apiFetch } from '@/composables/api'
 
-const apiBase = getApiBase()
+// const apiBase = getApiBase()
 
 const error = ref('')
 const loading = ref(true)
 const cards = ref([])
 
-function UpdateMessageCount() {
-  const apiKey = sessionStorage.getItem('apiKey')
-  if (!apiKey) {
-    console.error('API key not found.')
-    return
-  }
+async function UpdateMessageCount() {
+  // const apiKey = sessionStorage.getItem('apiKey')
+  // if (!apiKey) {
+  //   console.error('API key not found.')
+  //   return
+  // }
 
   // fetch('/api/app_webservice/meldingen-notifcations.php?action=update', {
-  fetch(`${apiBase}/meldingen-notifcations.php?action=update`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: 'Bearer ' + apiKey,
-    },
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      console.log('Message count updated:', data)
-    })
-    .catch((err) => console.error('Network error:', err.message))
+  // fetch(`${apiBase}/meldingen-notifcations.php?action=update`, {
+  //   method: 'GET',
+  //   headers: {
+  //     'Content-Type': 'application/json',
+  //     Authorization: 'Bearer ' + apiKey,
+  //   },
+  // })
+  //   .then((res) => res.json())
+  //   .then((data) => {
+  //     console.log('Message count updated:', data)
+  //   })
+  //   .catch((err) => console.error('Network error:', err.message))
+  await apiFetch(`meldingen-notifcations.php?action=update`, { method: 'GET' })
 }
 
 async function fetchNews() {
-  const apiKey = sessionStorage.getItem('apiKey')
-  if (!apiKey) {
-    error.value = 'API key not found.'
-    loading.value = false
-    return
-  }
+  // const apiKey = sessionStorage.getItem('apiKey')
+  // if (!apiKey) {
+  //   error.value = 'API key not found.'
+  //   loading.value = false
+  //   return
+  // }
 
   try {
-    const res = await fetch(`${apiBase}/get-meldingen.php`, {
-      // const res = await fetch('/api/app_webservice/get-meldingen.php', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + apiKey,
-      },
-    })
-    const data = await res.json()
+    // const res = await fetch(`${apiBase}/get-meldingen.php`, {
+    //   // const res = await fetch('/api/app_webservice/get-meldingen.php', {
+    //   method: 'GET',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //     Authorization: 'Bearer ' + apiKey,
+    //   },
+    // })
+    // const data = await res.json()
+    const data = await apiFetch(`get-meldingen.php`, { method: 'GET' })
+    if (!data) return
     if (data.success) {
       if (!data.messages || data.messages.length === 0) {
         error.value = 'Geen berichten gevonden.'

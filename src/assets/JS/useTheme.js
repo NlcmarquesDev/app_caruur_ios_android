@@ -1,4 +1,4 @@
-import { ref, watchEffect, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 
 const theme = ref('light')
 
