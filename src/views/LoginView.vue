@@ -146,7 +146,6 @@ async function handleLogin() {
     const vehicleResponse = await vehicles()
 
     if (!vehicleResponse.success) {
-      // Mostrar mensagem e permanecer na página de login
       noVehiclesMessage.value = vehicleResponse.message
       return
     }

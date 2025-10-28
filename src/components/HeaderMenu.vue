@@ -40,7 +40,8 @@
 import { ref, watch, inject, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 const router = useRouter()
-import vehicles from './../assets/JS/getVehicles.js'
+import vehicles from '@/assets/JS/getVehicles'
+import { isAuthenticated } from '@/assets/JS/isAuth'
 const props = defineProps({
   showMenu: Boolean,
 })
@@ -60,6 +61,10 @@ const selectedVehicleId = selectedVehicle
 
 onMounted(async () => {
   try {
+    const authenticated = await isAuthenticated()
+    if (!authenticated) {
+      return
+    }
     const result = await vehicles()
     plates.value = result.vehicles
 
