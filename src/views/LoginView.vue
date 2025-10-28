@@ -9,6 +9,9 @@
     <p v-if="error" class="error-message">
       <i class="fas fa-exclamation-circle"></i> Ongeldige inloggegevens. Probeer het opnieuw.
     </p>
+    <p v-if="noVehiclesMessage" class="error-message">
+      <i class="fas fa-exclamation-circle"></i> {{ noVehiclesMessage }}
+    </p>
 
     <form class="login-form" id="login-form" @submit.prevent="handleLogin">
       <div class="form-group">
@@ -56,7 +59,8 @@
 <script setup>
 import logo from '@/assets/images/logo.png'
 import { getApiBase } from '@/config/api'
-import { Preferences } from '@capacitor/preferences'
+// import vehicles from '@/composables/vehicles'
+import vehicles from '@/assets/JS/getVehicles.js'
 
 import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin'
 
@@ -66,6 +70,7 @@ import { useRouter } from 'vue-router'
 const router = useRouter()
 const email = ref('')
 const password = ref('')
+const noVehiclesMessage = ref('')
 const showPassword = ref(false)
 const error = ref(false)
 const remember = ref(false)
@@ -98,12 +103,14 @@ onMounted(async () => {
       router.push({ name: 'home' })
     }
   } catch (e) {
-    // ⚠️ Se não houver tokens, o utilizador continua na página de login
-    console.log('Nenhum token guardado, continuar no login.')
+    console.log('None token  keept, continue the login.')
   }
 })
 
 async function handleLogin() {
+  error.value = false
+  noVehiclesMessage.value = ''
+
   try {
     const res = await fetch(`${apiBase}/authenticate.php`, {
       method: 'POST',
@@ -119,26 +126,35 @@ async function handleLogin() {
 
     const data = await res.json()
 
-    if (data.success) {
-      await SecureStoragePlugin.set({ key: 'access_token', value: data.access_token })
-      await SecureStoragePlugin.set({ key: 'refresh_token', value: data.refresh_token })
-      await SecureStoragePlugin.set({ key: 'contactID', value: data.user.ContactID })
-
-      // sessionStorage.setItem('apiKey', data.api_key)
-      // sessionStorage.setItem('contactID', data.user['ContactID'])
-
-      // if (remember.value) {
-      //   await Preferences.set({ key: 'apiKey', value: data.api_key })
-      //   await Preferences.set({ key: 'contactID', value: data.user['ContactID'] })
-      // }
-
-      router.push({ name: 'home' })
-    } else {
-      showError()
+    if (!data.success) {
+      error.value = true
+      return
     }
+
+    await SecureStoragePlugin.set({ key: 'access_token', value: data.access_token })
+    await SecureStoragePlugin.set({ key: 'refresh_token', value: data.refresh_token })
+    await SecureStoragePlugin.set({ key: 'contactID', value: data.user.ContactID })
+
+    // sessionStorage.setItem('apiKey', data.api_key)
+    // sessionStorage.setItem('contactID', data.user['ContactID'])
+
+    // if (remember.value) {
+    //   await Preferences.set({ key: 'apiKey', value: data.api_key })
+    //   await Preferences.set({ key: 'contactID', value: data.user['ContactID'] })
+    // }
+
+    const vehicleResponse = await vehicles()
+
+    if (!vehicleResponse.success) {
+      // Mostrar mensagem e permanecer na página de login
+      noVehiclesMessage.value = vehicleResponse.message
+      return
+    }
+
+    router.push({ name: 'home' })
   } catch (err) {
     console.error(err)
-    showError()
+    noVehiclesMessage.value = 'Er is een technische fout opgetreden. Probeer het later opnieuw.'
   }
 }
 

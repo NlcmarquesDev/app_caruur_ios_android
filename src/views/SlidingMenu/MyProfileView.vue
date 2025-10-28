@@ -88,29 +88,60 @@
         <div class="form-group">
           <label for="currentPassword">Huidig wachtwoord</label>
           <div class="input-with-icon">
-            <input type="password" id="currentPassword" v-model="currentPass" />
-            <i class="fas fa-eye-slash icon toggle-password" data-for="currentPassword"></i>
+            <input
+              id="currentPassword"
+              v-model="currentPass"
+              :type="showCurrent ? 'text' : 'password'"
+            />
+            <button type="button" @click="showCurrent = !showCurrent">
+              <i
+                class="icon toggle-password"
+                :class="showCurrent ? 'fa fa-eye' : 'fa fa-eye-slash'"
+              ></i>
+            </button>
           </div>
         </div>
 
         <div class="form-group">
           <label for="newPassword">Nieuw wachtwoord</label>
           <div class="input-with-icon">
-            <input type="password" id="newPassword" v-model="newPass" />
-            <i class="fas fa-eye-slash icon toggle-password" data-for="newPass"></i>
+            <input
+              id="newPassword"
+              v-model="newPass"
+              :type="showNew ? 'text' : 'password'"
+              @input="checkPasswordStrength"
+            />
+            <button type="button" @click="showNew = !showNew">
+              <i
+                class="icon toggle-password"
+                :class="showNew ? 'fa fa-eye' : 'fa fa-eye-slash'"
+              ></i>
+            </button>
           </div>
           <div class="password-strength">
             <div class="strength-meter">
-              <div id="strength-bar"></div>
+              <div
+                id="strength-bar"
+                :style="{ width: strength.percent + '%', backgroundColor: strength.color }"
+              ></div>
             </div>
-            <div class="strength-text" id="strength-text">Voer een nieuw wachtwoord in</div>
+            <div class="strength-text" id="strength-text">{{ strength.text }}</div>
           </div>
         </div>
         <div class="form-group">
           <label for="confirmPassword">Herhaal nieuw wachtwoord</label>
           <div class="input-with-icon">
-            <input type="password" id="confirmPassword" v-model="confirmPass" />
-            <i class="fas fa-eye-slash icon toggle-password" data-for="confirmPassword"></i>
+            <input
+              id="confirmPassword"
+              v-model="confirmPass"
+              :type="showConfirm ? 'text' : 'password'"
+            />
+            <button type="button" @click="showConfirm = !showConfirm">
+              <i
+                class="icon toggle-password"
+                :class="showConfirm ? 'fa fa-eye' : 'fa fa-eye-slash'"
+              ></i>
+            </button>
           </div>
         </div>
         <div class="section-actions">
@@ -127,7 +158,7 @@
 <script setup>
 import ButtonInput from '@/components/ButtonInput.vue'
 import ShowAlert from '@/components/ShowAlert.vue'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, reactive } from 'vue'
 import { apiFetch } from '@/composables/api.js'
 // const apiBase = import.meta.env.VITE_API_BASE
 import { getApiBase } from '@/config/api'
@@ -138,7 +169,7 @@ import { SecureStoragePlugin } from 'capacitor-secure-storage-plugin'
 const error = ref('')
 const errormessage = ref('')
 const typeAlert = ref('error')
-const loading = ref(true)
+// const loading = ref(true)
 const currentPass = ref('')
 const newPass = ref('')
 const confirmPass = ref('')
@@ -152,6 +183,14 @@ const city = ref('')
 const country = ref('')
 const cancelBtn = 'cancel-btn'
 const saveBtn = 'save-btn'
+const showCurrent = ref(false)
+const showNew = ref(false)
+const showConfirm = ref(false)
+const strength = reactive({
+  percent: 0,
+  text: 'Voer een nieuw wachtwoord in',
+  color: '#ccc',
+})
 
 // function getAPIKey() {
 //   const apiKey = sessionStorage.getItem('apiKey')
@@ -162,6 +201,10 @@ const saveBtn = 'save-btn'
 //   }
 //   return apiKey
 // }
+// function showCurrentPassword() {
+//   showCurrent.value = !showCurrent.value
+// }
+
 async function fetchGetInfoUser() {
   // let apiKey = getAPIKey()
   // let contactID = sessionStorage.getItem('contactID')
@@ -249,6 +292,36 @@ function showMessage(message, type) {
     errormessage.value = ''
   }, 5000)
 }
+function checkPasswordStrength() {
+  const password = newPass.value
+  let score = 0
+
+  if (password.length >= 8) score += 1
+  if (/[A-Z]/.test(password)) score += 1
+  if (/[0-9]/.test(password)) score += 1
+  if (/[^A-Za-z0-9]/.test(password)) score += 1
+  if (password.length >= 12) score += 1
+
+  const levels = [
+    { text: 'Zeer zwak', color: '#e74c3c', percent: 20 },
+    { text: 'Zwak', color: '#e67e22', percent: 40 },
+    { text: 'Gemiddeld', color: '#f1c40f', percent: 60 },
+    { text: 'Sterk', color: '#2ecc71', percent: 80 },
+    { text: 'Zeer sterk', color: '#27ae60', percent: 100 },
+  ]
+
+  if (!password) {
+    strength.percent = 0
+    strength.text = 'Voer een nieuw wachtwoord in'
+    strength.color = '#ccc'
+    return
+  }
+
+  const level = levels[Math.min(score - 1, levels.length - 1)]
+  strength.percent = level.percent
+  strength.text = level.text
+  strength.color = level.color
+}
 
 onMounted(() => {
   fetchGetInfoUser()
@@ -258,6 +331,28 @@ onMounted(() => {
 <style scoped>
 section {
   padding: 3rem 3%;
+}
+
+/*Password-strength */
+
+.password-strength {
+  margin-top: 0.5rem;
+}
+.strength-meter {
+  background: #eee;
+  border-radius: 4px;
+  height: 6px;
+  width: 100%;
+  overflow: hidden;
+}
+.strength-bar {
+  height: 100%;
+  transition: all 0.3s ease;
+}
+.strength-text {
+  font-size: 0.9rem;
+  margin-top: 4px;
+  color: #666;
 }
 
 /* --------------------------------------
@@ -528,5 +623,9 @@ section {
     max-width: 600px;
     margin: 0 auto;
   }
+}
+.input-with-icon .icon {
+  top: 37%;
+  font-size: 1.2em;
 }
 </style>

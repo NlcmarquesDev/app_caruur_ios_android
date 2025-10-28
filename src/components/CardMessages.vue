@@ -36,7 +36,7 @@ if (props.card.active == 1) {
   showCard.value = true
   // props.card.Active = 'Actief'
   title.value = props.card.Title
-  description.value = props.card.Description
+  description.value = props.card.description
 
   if (props.card.favoriete == 1) {
     favorite.value = true

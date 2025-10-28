@@ -35,7 +35,20 @@ const vehicles = async () => {
   // }
 
   const data = await apiFetch('vehicles.php', { method: 'GET' })
-  if (!data) return
+  if (!data)
+    return {
+      success: false,
+      message: 'Er is een fout opgetreden bij het ophalen van de voertuigen.',
+    }
+
+  if (!data.vehicles || data.vehicles.length === 0) {
+    // Geen actieve voertuigen
+    return {
+      success: false,
+      message: 'Er zijn geen actieve voertuigen gekoppeld aan deze account.',
+    }
+  }
+  // if (!data) return
 
   sessionStorage.setItem('vehicles', JSON.stringify(data))
   let vehiclesSelected = data.vehicles && data.vehicles.length > 0 ? data.vehicles[0].ID : null
